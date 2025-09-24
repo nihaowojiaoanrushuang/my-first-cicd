@@ -1,0 +1,26 @@
+stages:
+  - build
+  - deploy
+
+build-image:
+  stage: build
+  image: docker:latest
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - echo "🚀 开始构建Docker镜像..."
+    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    - echo "✅ 镜像构建完成！"
+
+deploy-message:
+  stage: deploy
+  image: alpine:latest
+  script:
+    - echo "🎉 部署阶段！"
+    - echo "如果这是真实环境，现在就会自动部署到服务器了"
+    - echo "镜像地址: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+  only:
+    - main

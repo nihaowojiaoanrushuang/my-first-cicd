@@ -1,0 +1,31 @@
+name: Build and Test Website
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Test HTML syntax
+        run: |
+          echo "🔍 检查HTML文件..."
+          if grep -q "<html>" index.html; then
+            echo "✅ HTML结构正确"
+          else
+            echo "❌ 不是有效的HTML文件"
+            exit 1
+          fi
+      
+      - name: Build Docker image
+        run: |
+          echo "🐳 构建Docker镜像..."
+          docker build -t my-website .
+          echo "✅ 镜像构建成功"
+      
+      - name: Deploy preview
+        run: |
+          echo "🎯 模拟部署到服务器..."
+          echo "如果这是真实环境，现在就会部署了！"
+          echo "网站地址: https://my-website.example.com"
